@@ -1,33 +1,48 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, SafeAreaView, Button, Alert, Image } from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, View, Text, FlatList, ScrollView,} from 'react-native';
+import Header from './components/Header';
+import List from './components/List';
+import Form from './components/Form';
 
 export default function App() {
-  const handleTextPress = () => console.log('Ты нажал на кнопку')
-  const handleButtonPress = () => Alert.alert('Получишь результат','Основное сообщение',[
-    {text: "Да", onPress: () => alert('Ты нажал на кнопку да')},
-    {text:"Отмена", onPress: () => alert('Ты нажал на кнопку нет')}
-  ]);
-  const handleButtonPress2 = () => Alert.prompt('Молодец','Основное сообщение',text => alert(text))
+    const [listOfItems, setListOfItems] = useState([
+        {text: 'Купить молоко', key: '1'},
+        {text: 'Помыть машину', key: '2'},
+        {text: 'Купитть картошку', key: '3'},
+        {text: 'Стать', key: '4'}])
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <Text numberOfLines={2} style={styles.text} onPress={(handleTextPress)}>Open up App.js to start {'\n'}working on your app!!!!!</Text>
-      <Button title={'Нажми на кнопку'} color='red' onPress={handleButtonPress}/>
-      <Button title={'Кнопка 2'} onPress={handleButtonPress2}/>
+    const addHandler = (text) => {
+        setListOfItems((list) => {
+            return [
+                { text: text, key: Math.random().toString(36).substring(7) },
+                ...list
+            ]
+        })
+    }
 
-      <Image source={require('./assets/adaptive-icon.png')}/>
-      <StatusBar style="auto" />
-    </SafeAreaView>
-  );
+    const deleteHandler = (key) => {
+        setListOfItems((list) => {
+            return list.filter(listOfItems => listOfItems.key != key)
+        });
+    }
+
+    return (
+        <View>
+            <Header/>
+            <Form addHandler={addHandler} />
+
+            <ScrollView>
+                <FlatList data={listOfItems} renderItem={({ item })=> (
+                    <List el={item} deleteHandler={deleteHandler} />
+                )} />
+            </ScrollView>
+        </View>
+
+    );
 }
 
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  text: {
-    color:'red',
-    margin: 100
-  },
+
+
 });
